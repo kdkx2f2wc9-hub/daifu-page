@@ -1301,6 +1301,44 @@
             startCountdown();
             renderGoodsList();
         };
-    </script>
-</body>
-</html>
+    </script><script>
+    // 全局变量
+    let countdownTimer = null;
+    let totalSeconds = 15 * 60;
+    let goodsIdCounter = 2;
+    let isPaid = false;
+
+    // ========== 粘贴你的 getPayInfo 函数 ==========
+    function getPayInfo() {
+        const amount = document.getElementById('pay-amount').innerText.replace('¥', '');
+        fetch('/api/create_pay_link', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                amount: amount,
+                goods: [{'name': '珍珠奶茶', 'price': 12.5}] // 可改成动态获取商品
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.code === 200) {
+                // 展示收款码和备注
+                document.getElementById('wx-code-img').src = data.data.wx_pay_code_url;
+                document.getElementById('transfer-note').innerText = data.data.transfer_note;
+                showPayModal(); // 弹出收款码弹窗
+            }
+        })
+        .catch(err => {
+            // 加个错误提示，防止接口调用失败
+            alert('获取收款信息失败，请重试');
+            console.error(err);
+        })
+    }
+    // ========== 粘贴结束 ==========
+
+    // 原来的其他函数（比如 startCountdown、renderGoodsList 等）
+    function startCountdown() {
+        // ... 原有代码 ...
+    }
+    // ... 其他函数 ...
+</script>
